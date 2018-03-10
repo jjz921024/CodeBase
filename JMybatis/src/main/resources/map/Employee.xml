@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Employee">
+
+    <resultMap id="employeeResult" type="gdut.pojo.Employee">
+        <id column="emp_no" jdbcType="INTEGER" property="empNo"/>
+        <result column="birth_date" jdbcType="DATE" property="birthDate"/>
+        <result column="first_name" jdbcType="VARCHAR" property="firstName"/>
+        <result column="last_name" jdbcType="VARCHAR" property="lastName"/>
+        <result column="gender" property="gender" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/> <!-- 类型转换的handler -->
+        <result column="hire_date" jdbcType="DATE" property="hireDate"/>
+    </resultMap>
+
+
+    <!-- 主键要自动递增，有外键约束时不行-->
+    <insert id="insertEmp" parameterType="gdut.pojo.Employee" useGeneratedKeys="true" keyProperty="empNo">
+        INSERT INTO employees (birth_date, first_name, last_name, hire_date, gender)
+        VALUES (#{birthDate}, #{firstName}, #{lastName}, #{hireDate}, #{gender})
+    </insert>
+
+    <!--自定义返回的主键-->
+    <insert id="insertEmp2" parameterType="gdut.pojo.Employee" >
+        <selectKey resultType="int" order="BEFORE" keyProperty="empNo">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO employees (birth_date, first_name, last_name, hire_date)
+        VALUES (#{birthDate}, #{firstName}, #{lastName}, #{hireDate})
+    </insert>
+
+
+    <!--插入多条记录 ONGL表达式  list为传入集合-->
+    <insert id="insertMult" useGeneratedKeys="true" keyProperty="empNo" parameterType="java.util.List">
+        INSERT INTO employees (birth_date, first_name, last_name, hire_date) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.birthDate}, #{item.firstName}, #{item.lastName}, #{item.hireDate})
+        </foreach>
+    </insert>
+
+
+
+    <!--根据firstName或lastName或它们组合查找-->
+    <select id="selectByName" parameterType="gdut.pojo.Employee" resultMap="employeeResult">
+        SELECT * FROM employees
+        <where> <!--替代 WHERE 1=1-->
+            <if test="firstName != null">
+                AND first_name = #{firstName}
+            </if>
+            <if test="lastName != null">
+                AND last_name = #{lastName}
+            </if>
+        </where>
+    </select>
+
+    <!--按first或者last中的一个查找  类似switch-->
+    <select id="selectByOr" parameterType="gdut.pojo.Employee" resultMap="employeeResult">
+        SELECT * FROM employees WHERE 1=1
+        <choose>
+            <when test="firstName != null">
+                AND first_name = #{firstName}
+            </when>
+            <when test="lastName != null">
+                AND last_name = #{lastName}
+            </when>
+            <otherwise>
+                AND 1 = 2
+            </otherwise>
+        </choose>
+    </select>
+
+    <update id="updateEmp" parameterType="gdut.pojo.Employee">
+        UPDATE employees
+        <set>
+            <if test="firstName != null">first_name = #{firstName}</if>
+            <if test="lastName != null">last_name = #{lastName}</if>
+        </set>
+        WHERE emp_no = #{empNo}
+    </update>
+
+    <!--bind从表达式中创建一个变量并绑定到上下文-->
+    <select id="selectEmpLike" parameterType="gdut.pojo.Employee" resultMap="employeeResult">
+        <bind name="pattern" value="'%' + _parameter.getFirstName() + '%'" />
+        SELECT * FROM employees
+        WHERE first_name LIKE #{pattern}
+    </select>
+
+
+
+    <!-- mybatis是依靠jdbc rs.getMetaData()得到查询结果集中的字段名进行映射   e.会忽略，因此要起别名来区分-->
+    <resultMap id="EmpTitle" type="gdut.pojo.Employee">
+        <id column="E_ID" jdbcType="INTEGER" property="empNo"/>
+        <result column="birth_date" jdbcType="DATE" property="birthDate"/>
+        <result column="first_name" jdbcType="VARCHAR" property="firstName"/>
+        <result column="last_name" jdbcType="VARCHAR" property="lastName"/>
+        <result column="gender" property="gender" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/> <!-- 类型转换的handler -->
+        <result column="hire_date" jdbcType="DATE" property="hireDate"/>
+        <collection property="titleList" resultMap="Title.titleResult"/>
+    </resultMap>
+
+    <!--一对多关系映射  两张表存在同名字段时，其中一个要起别名-->
+    <select id="selectEmpTitleList" parameterType="gdut.pojo.Employee" resultMap="EmpTitle">
+        SELECT e.emp_no E_ID, e.first_name, e.last_name, e.hire_date, t.title, t.from_date, t.to_date
+        FROM employees AS e
+        JOIN titles AS t
+        ON e.emp_no = t.emp_no
+        WHERE e.emp_no = #{empNo}
+        ORDER BY t.from_date;
+    </select>
+
+
+
+
+
+</mapper>

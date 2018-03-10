@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <!--缓存使能-->
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <!-- 自定义枚举类处理器
+    <typeHandlers>
+        <typeHandler handler="ggdut.utilstils.CodeEnumTypeHandler" javaType="gdut.pojo.GenderEnum"/>
+    </typeHandlers>-->
+
+    <!--拦截器-->
+    <plugins>
+        <plugin interceptor="gdut.gdut.utils.OrderInterceptor"/>
+    </plugins>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://119.23.43.240:3306/employees"/>
+                <property name="username" value="root"/>
+                <property name="password" value="passwd"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+    <mappers>
+        <mapper resource="map/Department.xml"/>
+        <mapper resource="map/Employee.xml"/>
+        <mapper resource="map/Title.xml"/>
+
+    </mappers>
+
+
+</configuration>

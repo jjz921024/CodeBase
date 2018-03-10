@@ -1,0 +1,5 @@
+TODO List
+1. 与spring整合时，指定mapper接口用class="org.mybatis.spring.mapper.MapperScannerConfigurer"扫描包下的mapper 扫不到bean
+2. 关联查询时的懒加载机制
+3. 枚举类优化源码
+4. 缓存源码 http://blog.csdn.net/qq_25689397/article/details/52066179

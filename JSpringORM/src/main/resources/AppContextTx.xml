@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <!--jdbc的datasource-->
+    <bean id="dataSource" class="com.mysql.cj.jdbc.MysqlDataSource">
+        <property name="url" value="jdbc:mysql://119.23.43.240:3306/employees"/>
+        <property name="user" value="root"/>
+        <property name="password" value="passwd"/>
+    </bean>
+
+    <bean id="empDao" class="gdut.EmpDao">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--在业务层进行事务管理-->
+    <bean id="service" class="gdut.Service">
+        <property name="empDao" ref="empDao"/>
+    </bean>
+
+    <!--配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!--配置TransactionProxyFactoryBean产生代理类进行事务管理-->
+    <!--业务层的代理-->
+    <bean id="serviceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <!--代理目标类-->
+        <property name="target" ref="service"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <!--注入事务的属性-->
+        <property name="transactionAttributes">
+            <props>
+                <!--
+                    prop的格式：
+                        PROPAGATION  :事务的传播行为
+                        ISOLATION    :事务的隔离级别
+                        readOnly     :只读 (事务中不能进行增删改)
+                        -Exception   :发生哪些异常回滚
+                        +Exception   :发生哪些异常不回滚
+                -->
+                <prop key="doTxProxy*">PROPAGATION_REQUIRED, +java.lang.ArithmeticException</prop>
+            </props>
+        </property>
+    </bean>
+
+
+
+
+    <!--基于AspectJ AOP切面-->
+    <!--配置事务的增强-->
+    <tx:advice id="txAdivce" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--配置哪些方法要使用事务-->
+            <!--
+                  propagation       :事务的传播行为
+                  isolation         :事务的隔离级别
+                  read-only         :只读 (事务中不能进行增删改)
+                  rollback-for      :发生哪些异常回滚
+                  no-rollback-for   :发生哪些异常不回滚
+                  timeout           :过期信息
+                -->
+            <tx:method name="doTxAOP*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--配置切面* -->
+    <aop:config>
+        <!--配置切入点-->
+        <aop:pointcut id="p1" expression="execution(* gdut.Service.doTxAOP*(..))"/>
+        <!--切入点对应增强-->
+        <!--切入点下的指定方法使用对应的增强/通知-->
+        <aop:advisor advice-ref="txAdivce" pointcut-ref="p1"/>
+    </aop:config>
+
+
+
+
+    <!--启用事务注解-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>

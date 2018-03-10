@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gdut.db.DeptMapper">
+
+    <resultMap id="departmentResult" type="gdut.pojo.Department">
+        <id column="dept_no" jdbcType="CHAR" property="deptNo"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    </resultMap>
+
+    <!--使用mybatis-redis实现的分布式缓存-->
+    <cache type="org.mybatis.caches.redis.RedisCache"/>
+
+
+    <select id="selectAllDept" resultMap="departmentResult">
+        select * from departments
+    </select>
+
+    <!-- 查询结果返回给hashmap， 列名是key-->
+    <select id="selectOneDeptMap" parameterType="String" resultType="hashmap">
+        <!-- String或基本数据类型 #{xx}会被mybatis替换成参数-->
+        select * from departments WHERE dept_no = #{_parameter}
+    </select>
+
+    <select id="selectOneDeptMapByDept" parameterType="gdut.pojo.Department" resultType="hashmap">
+        <!-- mybatis会取得变量名xx，再在parameterType内找同名变量赋值-->
+        select * from departments WHERE dept_no = #{deptNo}
+    </select>
+
+
+    <insert id="insertDept" parameterType="gdut.pojo.Department">
+        INSERT INTO departments (dept_no, dept_name)
+        VALUES (#{deptNo}, #{deptName})
+    </insert>
+
+    <update id="updateDeptName" parameterType="gdut.pojo.Department">
+        UPDATE departments
+        SET dept_name=#{deptName}
+        WHERE dept_no=#{deptNo}
+    </update>
+
+    <delete id="deleteDeptByNo" parameterType="String">
+        DELETE FROM departments
+        WHERE dept_no=#{no}
+    </delete>
+
+</mapper>
