@@ -12,7 +12,6 @@
         <module>JMybatis</module>
         <module>JSpringORM</module>
         <module>JZookeeper</module>
-        <module>JHadoop</module>
     </modules>
 
     <properties>
@@ -24,7 +23,6 @@
         <jdbc.version>6.0.6</jdbc.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <zookeeper.version>3.4.9</zookeeper.version>
-        <hadoop.version>2.9.0</hadoop.version>
     </properties>
 
     <dependencies>
