@@ -12,6 +12,7 @@
         <module>JMybatis</module>
         <module>JSpringORM</module>
         <module>JZookeeper</module>
+        <module>JRedis</module>
     </modules>
 
     <properties>
