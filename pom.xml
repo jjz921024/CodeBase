@@ -24,6 +24,7 @@
         <jdbc.version>6.0.6</jdbc.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <zookeeper.version>3.4.9</zookeeper.version>
+        <fastjson.version>1.2.47</fastjson.version>
     </properties>
 
     <dependencies>
@@ -48,6 +49,14 @@
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+
 
     </dependencies>
 

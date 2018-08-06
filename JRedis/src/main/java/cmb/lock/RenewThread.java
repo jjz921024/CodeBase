@@ -1,4 +1,4 @@
-package cmb;
+package cmb.lock;
 
 import redis.clients.jedis.Jedis;
 

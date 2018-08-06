@@ -1,6 +1,6 @@
-import cmb.RedisDistributedLock;
-import org.junit.After;
-import org.junit.Before;
+import cmb.lock.RedisDistributedLock;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.embedded.RedisServer;
@@ -12,11 +12,12 @@ import java.io.IOException;
  */
 public class LockTest {
 
-    private RedisServer redisServer;
-    private Jedis jedis;
+    private static RedisServer redisServer;
+    private static Jedis jedis;
 
-    @Before
-    public void init() {
+    @SuppressWarnings("Duplicates")
+    @BeforeClass
+    public static void init() {
         try {
             redisServer = new RedisServer(6379);
             redisServer.start();
@@ -26,8 +27,8 @@ public class LockTest {
         }
     }
 
-    @After
-    public void release() {
+    @AfterClass
+    public static void release() {
         redisServer.stop();
         jedis.close();
     }
