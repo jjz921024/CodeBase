@@ -13,6 +13,7 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <!--Spring整合Mybatis的Demo，扫描Mapper接口，SpringService类中调用mybatis-->
 
     <context:component-scan base-package="gdut"/>
 

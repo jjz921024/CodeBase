@@ -13,6 +13,7 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <!--配置声明式的事务管理-->
 
     <!--jdbc的datasource-->
     <bean id="dataSource" class="com.mysql.cj.jdbc.MysqlDataSource">
@@ -34,7 +35,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-
+    <!--声明式事务管理 其一：利用代理类 -->
     <!--配置TransactionProxyFactoryBean产生代理类进行事务管理-->
     <!--业务层的代理-->
     <bean id="serviceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -60,6 +61,7 @@
 
 
 
+    <!--声明式事务管理 其二：利用切面 -->
     <!--基于AspectJ AOP切面-->
     <!--配置事务的增强-->
     <tx:advice id="txAdivce" transaction-manager="transactionManager">

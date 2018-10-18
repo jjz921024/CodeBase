@@ -21,6 +21,10 @@ public class Service {
         this.transactionTemplate = transactionTemplate;
     }
 
+    /**
+     * 编程式的事务管理
+     * 事务管理器在xml中配置
+     */
     public void doService(Employee employee1, Employee employee2) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override

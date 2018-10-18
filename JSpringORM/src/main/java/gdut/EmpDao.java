@@ -4,7 +4,7 @@ import gdut.pojo.Employee;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
- * Spring-JDBC demo
+ * 单独展示Spring-JDBC的例子
  * Created by Jun on 2018/2/13.
  */
 public class EmpDao extends JdbcDaoSupport {
