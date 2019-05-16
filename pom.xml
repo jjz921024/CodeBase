@@ -13,6 +13,7 @@
         <module>JSpringORM</module>
         <module>JZookeeper</module>
         <module>JRedis</module>
+        <module>JSpring</module>
     </modules>
 
     <properties>
